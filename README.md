@@ -6,7 +6,7 @@
 - **Private**: Yes
 - **Type**: module
 - **Description**: Unity Manager is a dynamic project management application featuring real-time collaboration tools, including an integrated chat system. It allows teams to efficiently manage tasks, track project progress, and communicate seamlessly within a single platform.
-- **Author**: Kheang TE, Mohamed ZERROUKI, Xavier Ladron, Henry Iosipov
+- **Author**: Kheang TE, Mohamed ZERROUKI, Xavier Landron, Henry Iosipov
 - **License**: ISC
 
 ## Getting Started
