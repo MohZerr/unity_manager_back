@@ -8,7 +8,7 @@ import cookieParser from 'cookie-parser';
 import router from './app/routers/index.js';
 import mongooseConnexion from './db/dbClients/mongooseClient.js';
 import {redisConnexion} from './db/dbClients/redisClient.js';
-import socketApp from './app/sockets/app.socket.js';
+import socketApp  from './app/sockets/app.socket.js';
 import rateLimiter from './app/middlewares/rateLimiter.middleware.js';
 import bodySanitizer from './app/middlewares/bodySanitizer.middleware.js';
 import swagger from './app/services/swagger/index.js';

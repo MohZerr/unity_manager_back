@@ -123,7 +123,7 @@ export default class userController extends coreController {
     const accessToken = Jwt.sign({ id: user.id }, process.env.JWT_SECRET);
     res.cookie('token', accessToken, {
       httpOnly: true, // Le cookie n'est pas accessible via JavaScript côté client
-      secure: true, // Le cookie est envoyé uniquement sur des connexions HTTPS
+      secure: process.env.ENV === "PROD" ? true : false, // On définit si les cookies de session doivent être envoyés uniquement via HTTPS
       maxAge: 24 * 60 * 60 * 1000, // Temps d'expiration du cookie en millisecondes
       sameSite: 'strict', // Le cookie est envoyé uniquement avec des requêtes du même site
     });

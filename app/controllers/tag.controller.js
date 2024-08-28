@@ -2,6 +2,7 @@
 import ApiError from '../errors/api.error.js';
 import { Tag }  from '../../db/models/index.js';
 import coreController from './core.controller.js';
+import { getIOInstance } from '../sockets/app.socket.js';
 
 export default class tagController extends coreController {
   static tableName = Tag;
@@ -25,6 +26,7 @@ export default class tagController extends coreController {
           error: 'The requested resource could not be found on the server.',
         });
       }
+      getIOInstance().emit('refreshBoard');
       return res.json(findTag);
     } catch (error) {
       console.error(error);
@@ -50,6 +52,7 @@ export default class tagController extends coreController {
       return next(new ApiError(404, 'The association between the card and tag could not be found.'));
     }
 
+    getIOInstance().emit('refreshBoard');
     return res.json({ message: 'Association between card and tag was successfully deleted.' });
   }
 

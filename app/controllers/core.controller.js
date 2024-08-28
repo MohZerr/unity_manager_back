@@ -1,4 +1,6 @@
+
 import ApiError from '../errors/api.error.js';
+import { getIOInstance } from '../sockets/app.socket.js';
 
 export default class coreController {
   static tableName = null;
@@ -61,6 +63,10 @@ export default class coreController {
       next(new ApiError(404, 'Data not found', `${this.stringTableName} not found with the provided the ID: ${id}`));
     }
     await result.destroy();
+    if(result){
+      console.log(getIOInstance)
+      getIOInstance().emit('refreshBoard');
+    }
     return res.status(204).end();
   }
 
@@ -74,6 +80,10 @@ export default class coreController {
   static async create(req, res) {
     const input = req.body;
     const result = await this.tableName.create(input);
+    if(result){
+      console.log(getIOInstance)
+      getIOInstance().emit('refreshBoard');
+    }
     return res.status(201).json(result);
   }
 
@@ -95,6 +105,10 @@ export default class coreController {
       return next(new ApiError(404, 'Data not found', `${this.stringTableName} not found with the provided the ID: ${id}`));
     }
     await result.update(input);
+    if(result){
+      console.log(getIOInstance)
+      getIOInstance().emit('refreshBoard');
+    }
     return res.json(result);
   }
 }

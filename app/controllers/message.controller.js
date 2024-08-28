@@ -1,5 +1,7 @@
 import { Message, User } from '../../db/models/index.js';
 import ApiError from '../errors/api.error.js';
+import { getIOInstance } from '../sockets/app.socket.js';
+
 
 const messageController = {
 
@@ -14,7 +16,8 @@ const messageController = {
     const { id } = req.user;
     const input = req.body;
     const newMessage = new Message({ ...input, user_id: id });
-    await newMessage.save();
+    await newMessage.save()
+    getIOInstance().emit('refreshMessage');
     res.send(newMessage);
   },
   /**
