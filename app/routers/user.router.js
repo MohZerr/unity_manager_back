@@ -6,6 +6,7 @@ import updateSchema from '../schemas/user.update.schema.js';
 import signinSchema from '../schemas/user.signin.schema.js';
 import authMiddleware from '../middlewares/authentification.middleware.js';
 import validationMiddleware from '../middlewares/validation.middleware.js';
+import cacheMiddleware from '../middlewares/cache.middleware.js';
 /**
  * A User object
  * @typedef {object} UserInput
@@ -50,7 +51,7 @@ router
  * @return {ApiError} 400 - bad input response
  * @return {ApiError} 500 - internal server error response
  */
-  .get(authMiddleware, wrapper(userController.getAll.bind(userController)))
+  .get(cacheMiddleware('user',60),wrapper(userController.getAll.bind(userController)))
 
 /**
  * POST /users

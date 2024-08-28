@@ -1,6 +1,6 @@
 // eslint-disable-next-line import/no-unresolved, import/extensions
 import ApiError from '../errors/api.error.js';
-import { Tag } from '../models/index.js';
+import { Tag }  from '../../db/models/index.js';
 import coreController from './core.controller.js';
 
 export default class tagController extends coreController {

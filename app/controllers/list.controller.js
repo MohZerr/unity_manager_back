@@ -1,7 +1,7 @@
 // eslint-disable-next-line import/no-unresolved, import/extensions
 import {
   List, Card, User, Tag,
-} from '../models/index.js';
+} from '../../db/models/index.js';
 import coreController from './core.controller.js';
 
 export default class listController extends coreController {

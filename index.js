@@ -6,14 +6,16 @@ import { createServer } from 'http';
 import { Server as WebSocketServer } from 'socket.io';
 import cookieParser from 'cookie-parser';
 import router from './app/routers/index.js';
-import mongooseConnexion from './app/models/mongooseClient.js';
+import mongooseConnexion from './db/dbClients/mongooseClient.js';
+import {redisConnexion} from './db/dbClients/redisClient.js';
 import socketApp from './app/sockets/app.socket.js';
 import rateLimiter from './app/middlewares/rateLimiter.middleware.js';
 import bodySanitizer from './app/middlewares/bodySanitizer.middleware.js';
 import swagger from './app/services/swagger/index.js';
 
-await mongooseConnexion();
 
+await mongooseConnexion();
+await redisConnexion();
 const app = express();
 
 swagger(app);
@@ -22,7 +24,7 @@ const httpServer = createServer(app);
 
 const io = new WebSocketServer(httpServer, {
   cors: {
-    origin: 'process.env.FRONT_URL',
+    origin: process.env.FRONT_URL,
     methods: ['GET', 'POST'],
     credentials: true,
   },
@@ -32,8 +34,9 @@ app.use(rateLimiter);
 app.use(cookieParser());
 socketApp(io);
 
+console.log(process.env)
 const corsOptions = {
-  origin: 'process.env.FRONT_URL',
+  origin: process.env.FRONT_URL,
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
   optionsSuccessStatus: 200,

@@ -2,7 +2,7 @@
 import ApiError from '../errors/api.error.js';
 import {
   Project, User, List, Card, Tag, Message, sequelize,
-} from '../models/index.js';
+}  from '../../db/models/index.js';
 import coreController from './core.controller.js';
 
 export default class projectController extends coreController {

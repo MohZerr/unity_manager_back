@@ -1,4 +1,4 @@
-import { Message, User } from '../models/index.js';
+import { Message, User } from '../../db/models/index.js';
 import ApiError from '../errors/api.error.js';
 
 const messageController = {
