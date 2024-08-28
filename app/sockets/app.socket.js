@@ -7,8 +7,11 @@
  */
 const users = [];
 const messages = [];
+let ioInstance;
 
-export default (io) => {
+export default function initSocketIO(io) {
+  ioInstance = io;
+  
   io.on('connection', (socket) => {
     const user = {
       id: socket.id,
@@ -44,9 +47,11 @@ export default (io) => {
     socket.on('newCollaborator', () => {
       io.to(user.project?.id).emit('refreshCollaborators');
     });
-    socket.on('boardEvent', () => {
+
+    // L'événement pour rafraichir le tableau
+    function refreshBoard() {
       io.to(user.project?.id).emit('refreshBoard');
-    });
+    }
 
     // L'événement pour envoyer un message au projet
     socket.on('messageCreation', () => {
@@ -63,4 +68,6 @@ export default (io) => {
       // io.to(user.project.id).emit('chatState', { users, messages });
     });
   });
+  return io;
 };
+export const getIOInstance = () => ioInstance;

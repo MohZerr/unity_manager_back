@@ -187,7 +187,6 @@ export default class projectController extends coreController {
   }
 
   static async createCollaborators(req, res) {
-    console.log('im here', req.body);
     const { id } = req.params;
     const collaboratorEmail = req.body.email;
     const project = await Project.findByPk(id);

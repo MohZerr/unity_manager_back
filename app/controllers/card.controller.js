@@ -4,6 +4,7 @@ import {Card, Tag
 } from '../../db/models/index.js';
 import coreController from './core.controller.js';
 import ApiError from '../errors/api.error.js';
+import { getIOInstance } from '../sockets/app.socket.js';
 
 export default class cardController extends coreController {
   static tableName = Card;
@@ -33,6 +34,7 @@ export default class cardController extends coreController {
         await card.addTag(tag);
       });
     }
+      getIOInstance().emit('refreshBoard');
     return res.status(201).json({ message: 'Card was successfully created' });
   }
 
