@@ -30,6 +30,7 @@
     "mongodb": "^6.6.1",
     "mongoose": "^8.3.5",
     "pg": "^8.11.5",
+    "redis": "^4.6.15",
     "sanitize-html": "^2.13.0",
     "sequelize": "^6.37.3",
     "socket.io": "^4.7.5",

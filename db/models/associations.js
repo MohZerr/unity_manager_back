@@ -4,7 +4,7 @@ import List from './List.js';
 import Tag from './Tag.js';
 import Project from './Project.js';
 import User from './User.js';
-import sequelize from './sequelizeClient.js';
+import sequelize from '../dbClients/sequelizeClient.js';
 
 // List <--> Card (One-to-Many)
 List.hasMany(Card, {

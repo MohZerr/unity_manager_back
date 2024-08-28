@@ -2,7 +2,7 @@ import bcrypt from 'bcrypt';
 import Jwt from 'jsonwebtoken';
 import {
   Card, List, Project, Tag, User,
-} from '../models/index.js';
+}  from '../../db/models/index.js';
 import coreController from './core.controller.js';
 import ApiError from '../errors/api.error.js';
 

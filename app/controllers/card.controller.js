@@ -1,6 +1,7 @@
 /* eslint-disable import/extensions */
 /* eslint-disable max-len */
-import { Card, Tag } from '../models/index.js';
+import {Card, Tag
+} from '../../db/models/index.js';
 import coreController from './core.controller.js';
 import ApiError from '../errors/api.error.js';
 
