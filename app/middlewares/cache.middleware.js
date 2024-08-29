@@ -15,7 +15,6 @@ export default (keyPrefix, duration) => {
     try {
      // Get the response from the cache
       const data = await redisClient.get(key);
-      console.log(data)
       if (data !== null) {
         // Parse the JSON string into an object 
         const jsonData = JSON.parse(data);

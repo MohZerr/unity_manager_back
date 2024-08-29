@@ -64,8 +64,7 @@ export default class coreController {
     }
     await result.destroy();
     if(result){
-      console.log(getIOInstance)
-      getIOInstance().emit('refreshBoard');
+      getIOInstance().to(input.project_id).emit('refreshBoard');
     }
     return res.status(204).end();
   }
@@ -81,8 +80,7 @@ export default class coreController {
     const input = req.body;
     const result = await this.tableName.create(input);
     if(result){
-      console.log(getIOInstance)
-      getIOInstance().emit('refreshBoard');
+      getIOInstance().to(input.project_id).emit('refreshBoard');
     }
     return res.status(201).json(result);
   }
@@ -106,8 +104,7 @@ export default class coreController {
     }
     await result.update(input);
     if(result){
-      console.log(getIOInstance)
-      getIOInstance().emit('refreshBoard');
+      getIOInstance().to(input.project_id).emit('refreshBoard');
     }
     return res.json(result);
   }
