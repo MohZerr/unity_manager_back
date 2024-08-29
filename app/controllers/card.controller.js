@@ -34,7 +34,7 @@ export default class cardController extends coreController {
         await card.addTag(tag);
       });
     }
-      getIOInstance().emit('refreshBoard');
+      getIOInstance().to(input.project_id).emit('refreshBoard');
     return res.status(201).json({ message: 'Card was successfully created' });
   }
 

@@ -17,7 +17,7 @@ const messageController = {
     const input = req.body;
     const newMessage = new Message({ ...input, user_id: id });
     await newMessage.save()
-    getIOInstance().emit('refreshMessage');
+      getIOInstance().to(input.project_id).emit('refreshMessage');
     res.send(newMessage);
   },
   /**

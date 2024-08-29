@@ -34,7 +34,7 @@ app.use(rateLimiter);
 app.use(cookieParser());
 socketApp(io);
 
-console.log(process.env)
+
 const corsOptions = {
   origin: process.env.FRONT_URL,
   allowedHeaders: ['Content-Type', 'Authorization'],

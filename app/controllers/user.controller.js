@@ -68,7 +68,6 @@ export default class userController extends coreController {
       );
     }
     const user = await User.findByPk(userId);
-    console.log(user);
     if (!user) {
       return next(new ApiError(404, 'Not Found', 'User not found'));
     }
