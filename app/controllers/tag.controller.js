@@ -26,7 +26,7 @@ export default class tagController extends coreController {
           error: 'The requested resource could not be found on the server.',
         });
       }
-      getIOInstance().to(input.project_id).emit('refreshBoard');
+        getIOInstance().to(input.project_id).emit(`refresh${this.stringTableName}`);
       return res.json(findTag);
     } catch (error) {
       console.error(error);
@@ -52,7 +52,8 @@ export default class tagController extends coreController {
       return next(new ApiError(404, 'The association between the card and tag could not be found.'));
     }
 
-    getIOInstance().to(input.project_id).emit('refreshBoard');
+    console.log(`refresh${this.stringTableName}`)
+    getIOInstance().to(input.project_id).emit(`refresh${this.stringTableName}`);
     return res.json({ message: 'Association between card and tag was successfully deleted.' });
   }
 

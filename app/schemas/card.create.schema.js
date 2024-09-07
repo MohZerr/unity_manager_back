@@ -6,4 +6,5 @@ export default Joi.object({
   position: Joi.number().greater(0),
   list_id: Joi.number().integer().greater(0).required(),
   tags: Joi.array().items(Joi.number().integer().greater(0)),
+  project_id: Joi.number().integer().greater(0).required(),
 });

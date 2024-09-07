@@ -96,7 +96,7 @@ export default class projectController extends coreController {
     const project = await Project.findByPk(id, {
       include: [{
         model: User, // The collaborators of the project
-        attributes: ['id', 'firstname', 'lastname'],
+        attributes: ['id', 'firstname', 'lastname','code_color'],
         as: 'collaborators',
         through: { attributes: [] },
       },

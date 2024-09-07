@@ -18,24 +18,42 @@ export default class cardController extends coreController {
       list_id,
       position,
       tags,
+      project_id
     } = req.body;
-
-    const card = await Card.create({
-      name, content, list_id, position,
-    });
-    if (tags && tags.length > 0) {
-      tags.forEach(async (tagId) => {
-        const tag = await Tag.findByPk(tagId);
-        if (!tag) {
-          res.status(404).json({
-            error: `Tag not found with the provided the ID: ${tagId}`,
-          });
-        }
-        await card.addTag(tag);
+  
+    try {
+      // Création de la carte
+      const card = await Card.create({
+        name, content, list_id, position,
       });
+  
+      card.dataValues.tags = [];
+  
+      // Ajouter tous les tags avec Promise.all
+      if (tags && tags.length > 0) {
+        const tagPromises = tags.map(async (tagz) => {
+          const tag = await Tag.findByPk(tagz);
+          if (!tag) {
+            throw new Error(`Tag not found with the provided ID: ${tagz}`);
+          }
+          await card.addTag(tag);  // Ajout du tag à la carte
+          card.dataValues.tags.push(tag.dataValues);     // Ajout du tag au tableau local
+          return tag;
+        });
+  
+        // Attendre que tous les tags soient ajoutés
+        await Promise.all(tagPromises);
+      }
+  
+      // Emission de l'événement avec les tags ajoutés
+      getIOInstance().to(project_id).emit(`refresh${this.stringTableName}`, { verb: 'create', result: card });
+  
+      // Retour de la réponse HTTP avec la carte et les tags
+      return res.status(201).json({ message: 'Card was successfully created', card });
+    } catch (error) {
+      console.error('Error creating card:', error.message);
+      return res.status(500).json({ error: error.message });
     }
-      getIOInstance().to(input.project_id).emit('refreshBoard');
-    return res.status(201).json({ message: 'Card was successfully created' });
   }
 
   static async getOne(req, res, next) {
@@ -63,27 +81,63 @@ export default class cardController extends coreController {
     if (!Number.isInteger(id)) {
       return next(new ApiError(400, 'Bad Request', 'The provided ID is not a number'));
     }
+  
     const {
-      name, content, list_id, position,
+      name, content, list_id, position, project_id, tags
     } = req.body;
+  
     const card = await this.tableName.findByPk(id);
     if (!card) {
-      return next(new ApiError(404, 'Data not found', `${this.stringTableName} not found with the provided the ID: ${id}`));
+      return next(new ApiError(404, 'Data not found', `${this.stringTableName} not found with the provided ID: ${id}`));
     }
-    await card.update({
-      name, content, list_id, position,
-    });
-    if (req.body.tags && req.body.tags.length > 0) {
-      const { tags } = req.body;
-      tags.forEach(async (tagId) => {
-        const tag = await Tag.findByPk(tagId);
-        if (!tag) {
-          next(new ApiError(404, 'Data not found', `Tag not found with the provided the ID: ${tagId}`));
-        }
-        await card.addTag(tag);
-      });
+  
+    // Récupérer les tags actuels associés à la carte
+    const currentTags = await card.getTags();
+  
+    // Vérifier si le contenu de la carte a changé
+    const hasCardChanged = (
+      card.name !== name ||
+      card.content !== content ||
+      card.list_id !== list_id ||
+      card.position !== position
+    );
+  
+    // Vérifier si les tags ont changé
+    const tagsIds = tags ? tags.map(tag => tag.id) : [];
+    const currentTagsIds = currentTags.map(tag => tag.id);
+    const hasTagsChanged = JSON.stringify(currentTagsIds.sort()) !== JSON.stringify(tagsIds.sort());
+  
+    // Si rien n'a changé, renvoyer un 204 (No Content)
+    if (!hasCardChanged && !hasTagsChanged) {
+      return res.status(204).end();
     }
 
-    return res.status(201).json({ message: 'Card was successfully updated' });
+    // Mise à jour de la carte
+  if(hasCardChanged){
+    await card.update({
+      name, content, list_id, position
+    });
+  }
+  
+    // Si les tags ont changé, mettre à jour les tags associés
+    if (hasTagsChanged) {
+      const tagsPromises = tags.map(async (tag) => {
+        const comparedTag = await Tag.findByPk(tag.id);
+        if (comparedTag && !currentTagsIds.includes(comparedTag.id)) {
+          // Ajouter le tag s'il n'est pas déjà associé
+          await card.addTag(comparedTag);
+        }
+      });
+  
+    
+  
+      await Promise.all([...tagsPromises]); // Attendre que toutes les modifications des tags soient faites
+    }
+    card.dataValues.tags = tags;
+  
+    // Émettre l'événement socket
+    getIOInstance().to(project_id).emit(`refresh${this.stringTableName}`, { verb: 'update', result: card });
+  
+    return res.status(200).json({ message: 'Card was successfully updated' });
   }
 }
