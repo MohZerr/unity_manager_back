@@ -13,6 +13,7 @@ CREATE TABLE "user" (
     "firstname" TEXT NOT NULL,
     "lastname" TEXT NOT NULL,
     "code_color" "hexColor" NOT NULL,
+    "isAdmin" BOOLEAN NOT NULL DEFAULT FALSE,
     "created_at" TIMESTAMPTZ NOT NULL,
     "updated_at" TIMESTAMPTZ
 );

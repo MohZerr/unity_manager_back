@@ -55,17 +55,20 @@ export default class coreController {
    */
   static async deleteOne(req, res, next) {
     const id = +req.params.id;
+    const project_id = +req.query.project_id;
+    console.log("id",project_id)
     if (!Number.isInteger(id)) {
       next(new ApiError(400, 'Bad Request', 'The provided ID is not a number'));
     }
     const result = await this.tableName.findByPk(id);
+    console.log(result.dataValues)
     if (!result) {
       next(new ApiError(404, 'Data not found', `${this.stringTableName} not found with the provided the ID: ${id}`));
     }
     await result.destroy();
-    if(result){
-      getIOInstance().to(input.project_id).emit('refreshBoard');
-    }
+      console.log(`refresh${this.stringTableName}`)
+      getIOInstance().to(project_id).emit(`refresh${this.stringTableName}`,{verb:'delete',result:result});
+
     return res.status(204).end();
   }
 
@@ -80,7 +83,8 @@ export default class coreController {
     const input = req.body;
     const result = await this.tableName.create(input);
     if(result){
-      getIOInstance().to(input.project_id).emit('refreshBoard');
+      console.log(`refresh${this.stringTableName}`)
+      getIOInstance().to(input.project_id).emit(`refresh${this.stringTableName}`,{verb:'create',result:result});
     }
     return res.status(201).json(result);
   }
@@ -98,13 +102,30 @@ export default class coreController {
       return next(new ApiError(400, 'Bad Request', 'The provided ID is not a number'));
     }
     const input = req.body;
+    console.log(input)
     const result = await this.tableName.findByPk(id);
     if (!result) {
       return next(new ApiError(404, 'Data not found', `${this.stringTableName} not found with the provided the ID: ${id}`));
     }
     await result.update(input);
     if(result){
-      getIOInstance().to(input.project_id).emit('refreshBoard');
+      getIOInstance().to(input.project_id).emit(`refresh${this.stringTableName}`,{verb:'update',result:result});
+    }
+    // if the position is too small, reset the position of all the lists
+    if(result.position<0.001){
+      console.log("reset position",result.dataValues.project_id)
+
+      const lists = await this.tableName.findAll({where:{project_id:result.project_id}});
+      console.log(lists)
+
+      lists.sort((a, b) => a.position - b.position);
+
+      const updatePromises = lists.map((list, index) => {
+        console.log(list.dataValues);
+        return list.update({ position: index + 1 });
+      });
+    
+      await Promise.all(updatePromises);
     }
     return res.json(result);
   }
