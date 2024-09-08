@@ -4,6 +4,7 @@ import wrapper from '../middlewares/controller.wrapper.js';
 import createSchema from '../schemas/project.create.schema.js';
 import updateSchema from '../schemas/project.update.schema.js';
 import validationMiddleware from '../middlewares/validation.middleware.js';
+import checkAdminMiddleware from '../middlewares/checkAdmin.middleware.js';
 /**
  * A api success object
  * @typedef {object} ApiSuccess
@@ -77,7 +78,8 @@ const router = Router();
  * @return {ApiError} 500 - internal server error response
  * @security JsonWebToken
  */
-router.route('/user').get(wrapper(projectController.getProjectByUser));
+router.route('/user')
+.get(wrapper(projectController.getProjectByUser));
 
 router.route('/')
 
@@ -90,7 +92,7 @@ router.route('/')
  * @return {ApiError} 500 - internal server error response
  * @security Bearer
  */
-  .get(wrapper(projectController.getAll.bind(projectController)))
+  .get(checkAdminMiddleware,wrapper(projectController.getAll.bind(projectController)))
 /**
  * POST /projects
  * @summary Create a new project
@@ -138,7 +140,8 @@ router.route('/:id')
  * @return {ApiError} 500 - internal server error response
  * @security Bearer
  */
-  .delete(wrapper(projectController.deleteOne.bind(projectController)));
+
+  .delete(checkAdminMiddleware,wrapper(projectController.deleteOne.bind(projectController)));
 
 router.route('/:id/details')
 /**

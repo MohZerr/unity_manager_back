@@ -5,6 +5,7 @@ import messageController from '../controllers/message.controller.js';
 import createSchema from '../schemas/message.create.schema.js';
 import updateSchema from '../schemas/message.update.schema.js';
 import validationMiddleware from '../middlewares/validation.middleware.js';
+import checkAdminMiddleware from '../middlewares/checkAdmin.middleware.js';
 
 const router = Router();
 export default router;
@@ -25,7 +26,7 @@ router
    * @group Messages - Operations on messages
    * @returns {Array<Object>} List of messages.
    */
-  .get(controllerWrapper(messageController.getAll))
+  .get(checkAdminMiddleware,controllerWrapper(messageController.getAll))
   /**
    * Creates a new message.
    * @route POST /messages
@@ -61,4 +62,5 @@ router.route('/:id')
    * @param {string} req.params.id - The unique identifier of the message to delete.
    * @returns {string} Deletion confirmation message.
    */
-  .delete(controllerWrapper(messageController.deleteOne));
+  
+  .delete(checkAdminMiddleware,controllerWrapper(messageController.deleteOne));
