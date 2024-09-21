@@ -4,7 +4,8 @@ import wrapper from '../middlewares/controller.wrapper.js';
 import createSchema from '../schemas/card.create.schema.js';
 import updateSchema from '../schemas/card.update.schema.js';
 import validationMiddleware from '../middlewares/validation.middleware.js';
-import checkAdminMiddleware from '../middlewares/checkAdmin.middleware.js';
+import checkProjectPermissionMiddleware from '../middlewares/checkProjectPermission.middleware.js';
+
 
 const router = Router();
 
@@ -16,7 +17,7 @@ router
    * @group Cards - Operations on cards
    * @returns {Array<Object>} List of cards.
    */
-  .get(checkAdminMiddleware,wrapper(cardController.getAll.bind(cardController)))
+  .get(checkProjectPermissionMiddleware,wrapper(cardController.getAll.bind(cardController)))
 
   /**
    * Creates a new card.
@@ -54,6 +55,6 @@ router.route('/:id')
    * @returns {string} Deletion confirmation message.
    */
   
-  .delete(checkAdminMiddleware,wrapper(cardController.deleteOne.bind(cardController)));
+  .delete(wrapper(cardController.deleteOne.bind(cardController)));
 
 export default router;

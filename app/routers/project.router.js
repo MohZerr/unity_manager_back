@@ -4,7 +4,8 @@ import wrapper from '../middlewares/controller.wrapper.js';
 import createSchema from '../schemas/project.create.schema.js';
 import updateSchema from '../schemas/project.update.schema.js';
 import validationMiddleware from '../middlewares/validation.middleware.js';
-import checkAdminMiddleware from '../middlewares/checkAdmin.middleware.js';
+import checkProjectPermissionMiddleware from '../middlewares/checkProjectPermission.middleware.js';
+
 /**
  * A api success object
  * @typedef {object} ApiSuccess
@@ -92,7 +93,7 @@ router.route('/')
  * @return {ApiError} 500 - internal server error response
  * @security Bearer
  */
-  .get(checkAdminMiddleware,wrapper(projectController.getAll.bind(projectController)))
+  .get(checkProjectPermissionMiddleware(['admin']),wrapper(projectController.getAll.bind(projectController)))
 /**
  * POST /projects
  * @summary Create a new project
@@ -116,7 +117,7 @@ router.route('/:id')
  * @return {ApiError} 500 - internal server error response
  * @security Bearer
  */
-  .get(wrapper(projectController.getOne.bind(projectController)))
+  .get(checkProjectPermissionMiddleware(['admin','owner','collaborator']),wrapper(projectController.getOne.bind(projectController)))
 /**
  * PATCH /projects/{id}
  * @summary Update an existing project
@@ -141,7 +142,7 @@ router.route('/:id')
  * @security Bearer
  */
 
-  .delete(checkAdminMiddleware,wrapper(projectController.deleteOne.bind(projectController)));
+  .delete(wrapper(projectController.deleteOne.bind(projectController)));
 
 router.route('/:id/details')
 /**
@@ -154,7 +155,7 @@ router.route('/:id/details')
  * @return {ApiError} 500 - internal server error response
  * @security Bearer
  */
-  .get(wrapper(projectController.getProjectWithDetails));
+  .get(checkProjectPermissionMiddleware(['admin','owner','collaborator']),wrapper(projectController.getProjectWithDetails));
 
 router.route('/:id/collaborators')
 /**
