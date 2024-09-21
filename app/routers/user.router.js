@@ -7,7 +7,7 @@ import signinSchema from '../schemas/user.signin.schema.js';
 import authMiddleware from '../middlewares/authentification.middleware.js';
 import validationMiddleware from '../middlewares/validation.middleware.js';
 import cacheMiddleware from '../middlewares/cache.middleware.js';
-import checkAdminMiddleware from '../middlewares/checkAdmin.middleware.js';
+import checkProjectPermissionMiddleware from '../middlewares/checkProjectPermission.middleware.js';
 /**
  * A User object
  * @typedef {object} UserInput
@@ -52,7 +52,7 @@ router
  * @return {ApiError} 400 - bad input response
  * @return {ApiError} 500 - internal server error response
  */
-  .get(checkAdminMiddleware,cacheMiddleware('user',60),wrapper(userController.getAll.bind(userController)))
+  .get(authMiddleware,checkProjectPermissionMiddleware(['admin']),cacheMiddleware('user',60),wrapper(userController.getAll.bind(userController)))
 
 /**
  * POST /users
@@ -124,6 +124,6 @@ router.route('/:id')
    * @return {ApiError} 500 - internal server error response
    */
   
-  .delete(checkAdminMiddleware,authMiddleware, wrapper(userController.deleteOne.bind(userController)));
+  .delete(authMiddleware, wrapper(userController.deleteOne.bind(userController)));
 
 export default router;

@@ -4,7 +4,7 @@ import wrapper from '../middlewares/controller.wrapper.js';
 import createSchema from '../schemas/list.create.schema.js';
 import updateSchema from '../schemas/list.update.schema.js';
 import validationMiddleware from '../middlewares/validation.middleware.js';
-import checkAdminMiddleware from '../middlewares/checkAdmin.middleware.js';
+import checkProjectPermissionMiddleware from '../middlewares/checkProjectPermission.middleware.js';
 /**
  * A api success object
  * @typedef {object} ApiSuccess
@@ -73,7 +73,7 @@ router
  * @return {ApiError} 500 - internal server error response
  * @security bearer
  */
-  .get(checkAdminMiddleware,wrapper(listController.getAll.bind(listController)))
+  .get(checkProjectPermissionMiddleware,wrapper(listController.getAll.bind(listController)))
   /**
    * POST /lists
    * @summary Create a new list
@@ -122,7 +122,7 @@ router.route('/:id')
    * @security bearer
    */
   
-  .delete(checkAdminMiddleware,wrapper(listController.deleteOne.bind(listController)));
+  .delete(wrapper(listController.deleteOne.bind(listController)));
 
 router.route('/projects/:id')
   /**

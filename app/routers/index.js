@@ -11,6 +11,7 @@ import errorMiddleware from '../middlewares/error.middleware.js';
 import authMiddleware from '../middlewares/authentification.middleware.js';
 import ApiError from '../errors/api.error.js';
 
+
 const router = Router();
 router.use('/api/users', userRouter);
 router.use(authMiddleware);

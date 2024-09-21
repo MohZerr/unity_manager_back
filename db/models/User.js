@@ -20,6 +20,11 @@ User.init({
     type: DataTypes.TEXT,
     allowNull: false,
   },
+  isAdmin: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  },
   code_color: {
     type: DataTypes.TEXT(7),
     allowNull: false,

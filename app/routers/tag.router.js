@@ -4,7 +4,7 @@ import wrapper from '../middlewares/controller.wrapper.js';
 import createSchema from '../schemas/tag.create.schema.js';
 import updateSchema from '../schemas/tag.update.schema.js';
 import validationMiddleware from '../middlewares/validation.middleware.js';
-import checkAdminMiddleware from '../middlewares/checkAdmin.middleware.js';
+import checkProjectPermissionMiddleware from '../middlewares/checkProjectPermission.middleware.js';
 
 const router = Router();
 router
@@ -15,7 +15,7 @@ router
    * @group Tags - Operations on tags
    * @returns {Array<Object>} List of tags.
    */
-  .get(checkAdminMiddleware,wrapper(tagController.getAll.bind(tagController)))
+  .get(checkProjectPermissionMiddleware,wrapper(tagController.getAll.bind(tagController)))
   /**
    * Creates a new tag.
    * @route POST /tags
@@ -54,7 +54,7 @@ router.route('/:id')
    * @returns {string} Deletion confirmation message.
    */
 
-  .delete(checkAdminMiddleware,wrapper(tagController.deleteOne.bind(tagController)));
+  .delete(wrapper(tagController.deleteOne.bind(tagController)));
 
 router.route('/projects/:id').get(wrapper(tagController.getByProject.bind(tagController)));
 
