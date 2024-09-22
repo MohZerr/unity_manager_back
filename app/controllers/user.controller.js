@@ -112,12 +112,12 @@ export default class userController extends coreController {
       );
     }
 
-    // const isMatching = await bcrypt.compare(password, user.password);
-    // if (!isMatching) {
-    //   return next(
-    //     new ApiError(401, 'Unauthorized', 'Email or password is incorrect'),
-    //   );
-    // }
+    const isMatching = await bcrypt.compare(password, user.password);
+    if (!isMatching) {
+      return next(
+        new ApiError(401, 'Unauthorized', 'Email or password is incorrect'),
+      );
+    }
 
     const accessToken = Jwt.sign({ id: user.id, isAdmin: user.isAdmin }, process.env.JWT_SECRET);
     res.cookie('token', accessToken, {

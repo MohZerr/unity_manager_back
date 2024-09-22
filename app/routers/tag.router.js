@@ -4,7 +4,7 @@ import wrapper from '../middlewares/controller.wrapper.js';
 import createSchema from '../schemas/tag.create.schema.js';
 import updateSchema from '../schemas/tag.update.schema.js';
 import validationMiddleware from '../middlewares/validation.middleware.js';
-import checkProjectPermissionMiddleware from '../middlewares/checkProjectPermission.middleware.js';
+import checkPermission from '../middlewares/checkPermission.middleware.js';
 
 const router = Router();
 router
@@ -15,7 +15,7 @@ router
    * @group Tags - Operations on tags
    * @returns {Array<Object>} List of tags.
    */
-  .get(checkProjectPermissionMiddleware,wrapper(tagController.getAll.bind(tagController)))
+  .get(checkPermission('tag',['admin']),wrapper(tagController.getAll.bind(tagController)))
   /**
    * Creates a new tag.
    * @route POST /tags
@@ -34,7 +34,7 @@ router.route('/:id')
    * @param {string} req.params.id - The unique identifier of the tag to retrieve.
    * @returns {Object} The requested tag.
    */
-  .get(wrapper(tagController.getOne.bind(tagController)))
+  .get(checkPermission('tag',['admin','collaborator','owner']),wrapper(tagController.getOne.bind(tagController)))
 
   /**
    * Updates an existing tag.
@@ -44,7 +44,7 @@ router.route('/:id')
    * @param {Object} req.body - Updated tag data.
    * @returns {Object} The updated tag.
    */
-  .patch(validationMiddleware(updateSchema, 'body'), wrapper(tagController.update.bind(tagController)))
+  .patch(checkPermission('tag',['admin','collaborator','owner']),validationMiddleware(updateSchema, 'body'), wrapper(tagController.update.bind(tagController)))
 
   /**
    * Deletes an existing tag.
@@ -56,6 +56,6 @@ router.route('/:id')
 
   .delete(wrapper(tagController.deleteOne.bind(tagController)));
 
-router.route('/projects/:id').get(wrapper(tagController.getByProject.bind(tagController)));
+router.route('/projects/:id').get(checkPermission('tag',['admin','collaborator','owner']),wrapper(tagController.getByProject.bind(tagController)));
 
 export default router;

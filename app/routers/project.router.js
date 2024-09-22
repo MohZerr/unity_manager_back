@@ -4,7 +4,7 @@ import wrapper from '../middlewares/controller.wrapper.js';
 import createSchema from '../schemas/project.create.schema.js';
 import updateSchema from '../schemas/project.update.schema.js';
 import validationMiddleware from '../middlewares/validation.middleware.js';
-import checkProjectPermissionMiddleware from '../middlewares/checkProjectPermission.middleware.js';
+import checkPermission from '../middlewares/checkPermission.middleware.js';
 
 /**
  * A api success object
@@ -93,7 +93,7 @@ router.route('/')
  * @return {ApiError} 500 - internal server error response
  * @security Bearer
  */
-  .get(checkProjectPermissionMiddleware(['admin']),wrapper(projectController.getAll.bind(projectController)))
+  .get(checkPermission('project',['admin']),wrapper(projectController.getAll.bind(projectController)))
 /**
  * POST /projects
  * @summary Create a new project
@@ -117,7 +117,7 @@ router.route('/:id')
  * @return {ApiError} 500 - internal server error response
  * @security Bearer
  */
-  .get(checkProjectPermissionMiddleware(['admin','owner','collaborator']),wrapper(projectController.getOne.bind(projectController)))
+  .get(checkPermission('project',['admin','owner','collaborator']),wrapper(projectController.getOne.bind(projectController)))
 /**
  * PATCH /projects/{id}
  * @summary Update an existing project
@@ -129,7 +129,7 @@ router.route('/:id')
  * @return {ApiError} 500 - internal server error response
  * @security Bearer
  * */
-  .patch(validationMiddleware(updateSchema, 'body'), wrapper(projectController.update.bind(projectController)))
+  .patch(checkPermission('project',['admin','owner']),validationMiddleware(updateSchema, 'body'), wrapper(projectController.update.bind(projectController)))
 
 /**
  * DELETE /projects/{id}
@@ -142,7 +142,7 @@ router.route('/:id')
  * @security Bearer
  */
 
-  .delete(wrapper(projectController.deleteOne.bind(projectController)));
+  .delete(checkPermission('project',['admin','owner']),wrapper(projectController.deleteOne.bind(projectController)));
 
 router.route('/:id/details')
 /**
@@ -155,7 +155,7 @@ router.route('/:id/details')
  * @return {ApiError} 500 - internal server error response
  * @security Bearer
  */
-  .get(checkProjectPermissionMiddleware(['admin','owner','collaborator']),wrapper(projectController.getProjectWithDetails));
+  .get(checkPermission('project',['admin','owner','collaborator']),wrapper(projectController.getProjectWithDetails));
 
 router.route('/:id/collaborators')
 /**
@@ -168,7 +168,7 @@ router.route('/:id/collaborators')
  *  @return {ApiError} 500 - internal server error response
  *  @security Bearer
  * */
-  .get(wrapper(projectController.getLastCollaborator.bind(projectController)))
+  .get(checkPermission('project',['admin','owner','collaborator']),wrapper(projectController.getLastCollaborator.bind(projectController)))
 /**
  * POST /projects/{id}/collaborators
  *  @summary Add a collaborator to a project
@@ -180,6 +180,6 @@ router.route('/:id/collaborators')
  *  @return {ApiError} 500 - internal server error response
  *  @security Bearer
  * */
-  .post(wrapper(projectController.createCollaborators.bind(projectController)));
+  .post(checkPermission('project',['admin','owner']),wrapper(projectController.createCollaborators.bind(projectController)));
 
 export default router;
