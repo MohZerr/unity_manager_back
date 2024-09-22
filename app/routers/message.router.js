@@ -5,7 +5,7 @@ import messageController from '../controllers/message.controller.js';
 import createSchema from '../schemas/message.create.schema.js';
 import updateSchema from '../schemas/message.update.schema.js';
 import validationMiddleware from '../middlewares/validation.middleware.js';
-import checkProjectPermissionMiddleware from '../middlewares/checkProjectPermission.middleware.js';
+import checkPermission from '../middlewares/checkPermission.middleware.js';
 
 const router = Router();
 export default router;
@@ -26,7 +26,7 @@ router
    * @group Messages - Operations on messages
    * @returns {Array<Object>} List of messages.
    */
-  .get(checkProjectPermissionMiddleware,controllerWrapper(messageController.getAll))
+  .get(checkPermission(['admin']),controllerWrapper(messageController.getAll))
   /**
    * Creates a new message.
    * @route POST /messages

@@ -4,7 +4,7 @@ import wrapper from '../middlewares/controller.wrapper.js';
 import createSchema from '../schemas/card.create.schema.js';
 import updateSchema from '../schemas/card.update.schema.js';
 import validationMiddleware from '../middlewares/validation.middleware.js';
-import checkProjectPermissionMiddleware from '../middlewares/checkProjectPermission.middleware.js';
+import checkPermission from '../middlewares/checkPermission.middleware.js';
 
 
 const router = Router();
@@ -17,7 +17,7 @@ router
    * @group Cards - Operations on cards
    * @returns {Array<Object>} List of cards.
    */
-  .get(checkProjectPermissionMiddleware,wrapper(cardController.getAll.bind(cardController)))
+  .get(checkPermission('list',['admin','collaborator','owner']),wrapper(cardController.getAll.bind(cardController)))
 
   /**
    * Creates a new card.
@@ -36,7 +36,7 @@ router.route('/:id')
    * @param {string} req.params.id - The unique identifier of the card to retrieve.
    * @returns {Object} The requested card.
    */
-  .get(wrapper(cardController.getOne.bind(cardController)))
+  .get(checkPermission('card',['admin','collaborator','owner']),wrapper(cardController.getOne.bind(cardController)))
   /**
    * Updates an existing card.
    * @route PATCH /cards/{id}
@@ -45,7 +45,7 @@ router.route('/:id')
    * @param {Object} req.body - Updated card data.
    * @returns {Object} The updated card.
    */
-  .patch(validationMiddleware(updateSchema, 'body'), wrapper(cardController.update.bind(cardController)))
+  .patch(checkPermission('card',['admin','collaborator','owner']),validationMiddleware(updateSchema, 'body'), wrapper(cardController.update.bind(cardController)))
 
   /**
    * Deletes an existing card.
@@ -55,6 +55,6 @@ router.route('/:id')
    * @returns {string} Deletion confirmation message.
    */
   
-  .delete(wrapper(cardController.deleteOne.bind(cardController)));
+  .delete(checkPermission('card',['admin','collaborator','owner']),wrapper(cardController.deleteOne.bind(cardController)));
 
 export default router;

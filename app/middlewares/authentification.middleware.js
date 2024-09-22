@@ -19,6 +19,7 @@ export default (req, res, next) => {
       next(new ApiError(401, 'Unauthorized', 'Invalid token'));
     }
     req.user = decoded;
+    console.log('User:', req.user);
     next();
   } catch (error) {
     next(new ApiError(500, 'Internal Server Error', 'An unexpected error occurred'));
